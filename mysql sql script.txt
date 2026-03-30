@@ -53,9 +53,9 @@ CREATE TABLE lms_test.subscriptions (
     course_id  INT NOT NULL,
     plan       VARCHAR(200) NOT NULL,
     startDate  DATETIME DEFAULT CURRENT_TIMESTAMP,
-    endDate  DATETIME DEFAULT CURRENT_TIMESTAMP,
-    status    TEXT,
-    amount      INT
+    endDate    DATETIME DEFAULT CURRENT_TIMESTAMP,
+    status     TEXT,
+    amount      INT,
     createdAt   DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt    DATETIME DEFAULT CURRENT_TIMESTAMP
     FOREIGN KEY (course_id) REFERENCES lms_test.courses(course_id) ON DELETE CASCADE,
@@ -71,7 +71,7 @@ CREATE TABLE lms_test.lessons (
     pdfurl      TEXT,
     order_id    INT,
     duration    INT DEFAULT 0,
-    order_id     INT NOT NULL DEFAULT 1,
+    order_id    INT NOT NULL DEFAULT 1,
     created_at   DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt    DATETIME DEFAULT CURRENT_TIMESTAMP
     FOREIGN KEY (module_id) REFERENCES lms_test.module(module_id) ON DELETE CASCADE,
