@@ -1,0 +1,115 @@
+---- MySQL Workbench  SQL Script
+
+CREATE DATABASE IF NOT EXISTS learning_portal
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE learning_portal;
+
+
+-- ─── USERS ───────────────────────────────────────────────────────────────────
+CREATE TABLE users (
+    user_id      INT AUTO_INCREMENT PRIMARY KEY,
+    username     VARCHAR(50)  UNIQUE NOT NULL,
+    email        VARCHAR(120) UNIQUE NOT NULL,
+    password_hash VARCHAR(256) NOT NULL,
+    role         ENUM('student','instructor','admin') DEFAULT 'student',
+    created_at   DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at   DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+---__________MODULE____________________________________________
+CREATE TABLE module (
+    module_id   INT AUTO_INCREMENT PRIMARY KEY,
+    course_id INT NOT NULL,
+    title    VARCHAR(100) NOT NULL,
+    order     INT NOT NULL,
+    completedAt  DATETIME,
+    createdAt     DATETIME,
+     updatedAt  DATETIME,
+    UNIQUE KEY uq_progress (module_id),
+    FOREIGN KEY (course_id)   REFERENCES users(course_id)   ON DELETE CASCADE
+);
+
+
+
+
+
+-- ─── COURSES ─────────────────────────────────────────────────────────────────
+CREATE TABLE courses (
+    course_id     INT AUTO_INCREMENT PRIMARY KEY,
+    title         VARCHAR(200) NOT NULL,
+    description   TEXT,
+    price_1month         DECIMAL(8,2) DEFAULT 0.00,
+    price_3months     DECIMAL(8,2),
+    price_6months     DECIMAL(8,2),
+    created_at    DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at    DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+
+---__________________ SUBSCRIPTIONS____________________________________________
+
+
+
+
+CREATE TABLE subscriptions (
+    subscriptions_id    INT AUTO_INCREMENT PRIMARY KEY,
+    user_id    INT NOT NULL,
+    course_id  INT NOT NULL,
+    plan       VARCHAR(200) NOT NULL,
+    startDate  DATETIME DEFAULT CURRENT_TIMESTAMP,
+    endDate  DATETIME DEFAULT CURRENT_TIMESTAMP,
+    status    TEXT,
+    amount      INT
+    created_at   DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updatedAt    DATETIME DEFAULT CURRENT_TIMESTAMP
+    FOREIGN KEY (course_id) REFERENCES   courses(course_id) ON DELETE CASCADE, FOREGIN KEY (user_id) REFERENCES users(user_id) ON DELETE  CASCADE
+);
+
+
+----
+-- ─── LESSONS ─────────────────────────────────────────────────────────────────
+CREATE TABLE lessons (
+    lesson_id    INT AUTO_INCREMENT PRIMARY KEY,
+    module_id    INT NOT NULL,
+    title        VARCHAR(200) NOT NULL,
+    videourl    TEXT,
+    pdfurl      TEXT,
+    order_id    INT,
+    duration    INT DEFAULT 0,
+    order_id     INT NOT NULL DEFAULT 1,
+    created_at   DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updatedAt    DATETIME DEFAULT CURRENT_TIMESTAMP
+    FOREIGN KEY (module_id) REFERENCES courses(order_id) ON DELETE CASCADE
+);
+
+-- ─── PROGRESS ────────────────────────────────────────────────────────────────
+
+CREATE TABLE progress (
+    progress_id   INT AUTO_INCREMENT PRIMARY KEY,
+    userid INT NOT NULL,
+    lessonid     INT NOT NULL,
+    completed  TINYINT(1) DEFAULT 0,
+    completedAt  DATETIME,
+    createdAt     DATETIME,
+     updatedAt  DATETIME,
+    UNIQUE KEY uq_progress (enrollment_id, lesson_id),
+    FOREIGN KEY (user_id)   REFERENCES users(user_id)   ON DELETE CASCADE,
+    FOREIGN KEY (lesson_id)     REFERENCES lessons(lesson_id)         ON DELETE CASCADE
+);
+
+CREATE TABLE ERROR_LOG(MODULE_NAME VARCHAR2 (15),ERROR_DATE DATE,ERROR_NO VARCHAR2 (10),ERROR_MSG VARCHAR2 (525),
+ROW_NUMBER NUMBER) TABLESPACE TABLESPACE_NAME;
+
+
+
+---- sequences
+CREATE SEQUENCE seq_users START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_courses START WITH 101 INCREMENT BY 1;
+CREATE SEQUENCE seq_subscriptions START WITH 1001 INCREMENT BY 1;
+CREATE SEQUENCE seq_lessons START WITH 5001 INCREMENT BY 1;
+CREATE SEQUENCE seq_module START WITH 201 INCREMENT BY 1;
+CREATE SEQUENCE seq_progress START WITH 3001 INCREMENT BY 1;
