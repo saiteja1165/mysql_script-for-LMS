@@ -24,12 +24,12 @@ CREATE TABLE lms_test.module (
     module_id   INT AUTO_INCREMENT PRIMARY KEY,
     course_id INT NOT NULL,
     title    VARCHAR(100) NOT NULL,
-    order     INT NOT NULL,
+    order_id     INT NOT NULL,
     completedAt  DATETIME,
     createdAt     DATETIME,
-     updatedAt  DATETIME,
+    updatedAt  DATETIME,
     UNIQUE KEY uq_progress (module_id),
-    FOREIGN KEY (course_id)   REFERENCES users(course_id)   ON DELETE CASCADE
+    FOREIGN KEY (course_id)   REFERENCES lms_test.users(course_id)   ON DELETE CASCADE
 );
 
 
@@ -41,8 +41,8 @@ CREATE TABLE lms_test.courses (
     price_1month         DECIMAL(8,2) DEFAULT 0.00,
     price_3months     DECIMAL(8,2),
     price_6months     DECIMAL(8,2),
-    created_at    DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at    DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    createdAt    DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updatedAt    DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 ---__________________ SUBSCRIPTIONS____________________________________________
@@ -56,9 +56,10 @@ CREATE TABLE lms_test.subscriptions (
     endDate  DATETIME DEFAULT CURRENT_TIMESTAMP,
     status    TEXT,
     amount      INT
-    created_at   DATETIME DEFAULT CURRENT_TIMESTAMP,
+    createdAt   DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt    DATETIME DEFAULT CURRENT_TIMESTAMP
-    FOREIGN KEY (course_id) REFERENCES   courses(course_id) ON DELETE CASCADE, FOREGIN KEY (user_id) REFERENCES users(user_id) ON DELETE  CASCADE
+    FOREIGN KEY (course_id) REFERENCES lms_test.courses(course_id) ON DELETE CASCADE,
+   FOREGIN KEY (user_id) REFERENCES lms_test.users(user_id) ON DELETE  CASCADE
 );
 
 -- ─── LESSONS ─────────────────────────────────────────────────────────────────
@@ -73,7 +74,8 @@ CREATE TABLE lms_test.lessons (
     order_id     INT NOT NULL DEFAULT 1,
     created_at   DATETIME DEFAULT CURRENT_TIMESTAMP,
     updatedAt    DATETIME DEFAULT CURRENT_TIMESTAMP
-    FOREIGN KEY (module_id) REFERENCES courses(order_id) ON DELETE CASCADE
+    FOREIGN KEY (module_id) REFERENCES lms_test.module(module_id) ON DELETE CASCADE,
+    FOREIGN KEY (order_id) REFERENCES lms_test.module(order_id) ON DELETE CASCADE
 );
 
 -- ─── PROGRESS ────────────────────────────────────────────────────────────────
@@ -86,8 +88,8 @@ CREATE TABLE lms_test.progress (
     createdAt     DATETIME,
      updatedAt  DATETIME,
     UNIQUE KEY uq_progress (enrollment_id, lesson_id),
-    FOREIGN KEY (user_id)   REFERENCES users(user_id)   ON DELETE CASCADE,
-    FOREIGN KEY (lesson_id)     REFERENCES lessons(lesson_id)         ON DELETE CASCADE
+    FOREIGN KEY (user_id)   REFERENCES lms_test.users(user_id)   ON DELETE CASCADE,
+    FOREIGN KEY (lesson_id)  REFERENCES lms_test.lessons(lesson_id)  ON DELETE CASCADE
 );
 
 CREATE TABLE lms_test.ERROR_LOG(MODULE_NAME VARCHAR2 (15),ERROR_DATE DATE,ERROR_NO VARCHAR2 (10),ERROR_MSG VARCHAR2 (525),
